@@ -89,6 +89,7 @@ class _KinetoProfile:
         with_flops: bool = False,
         with_modules: bool = False,
         experimental_config: Optional[_ExperimentalConfig] = None,
+        execution_trace_observer: Optional[ExecutionTraceObserver] = None,
     ):
         self.activities = set(activities) if activities else supported_activities()
         self.record_shapes = record_shapes
@@ -97,6 +98,7 @@ class _KinetoProfile:
         self.with_stack = with_stack
         self.with_modules = with_modules
         self.experimental_config = experimental_config
+        self.execution_trace_observer = execution_trace_observer
         self.profiler: Optional[prof.profile] = None
         self.mem_tl: Optional[MemoryProfileTimeline] = None
         self.use_device = None
@@ -129,6 +131,8 @@ class _KinetoProfile:
         self.profiler._prepare_trace()
 
     def start_trace(self):
+        if self.execution_trace_observer:
+            self.execution_trace_observer.start()
         assert self.profiler is not None
         self.profiler._start_trace()
 
@@ -161,6 +165,8 @@ class _KinetoProfile:
                     os.environ["TEARDOWN_CUPTI"] = "0"
 
     def stop_trace(self):
+        if self.execution_trace_observer:
+            self.execution_trace_observer.stop()
         assert self.profiler is not None
         self.profiler.__exit__(None, None, None)
 
@@ -527,6 +533,7 @@ class profile(_KinetoProfile):
         with_flops: bool = False,
         with_modules: bool = False,
         experimental_config: Optional[_ExperimentalConfig] = None,
+        execution_trace_observer: Optional[ExecutionTraceObserver] = None,
         # deprecated:
         use_cuda: Optional[bool] = None,
     ):
@@ -547,6 +554,7 @@ class profile(_KinetoProfile):
             with_flops=with_flops,
             with_modules=with_modules,
             experimental_config=experimental_config,
+            execution_trace_observer=execution_trace_observer,
         )
 
         if schedule:
