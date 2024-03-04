@@ -164,6 +164,9 @@ if [[ "$BUILD_ENVIRONMENT" == *xpu* ]]; then
   # shellcheck disable=SC1091
   source /opt/intel/oneapi/compiler/latest/env/vars.sh
   export USE_XPU=1
+  export PATH="/opt/intel/oneapi/compiler/2024.0/opt/oclfpga/bin:/opt/intel/oneapi/compiler/2024.0/bin:/opt/conda/envs/py_3.8/bin:/opt/conda/condabin:/opt/conda/envs/py_3.8/bin:/opt/conda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+  source activate py_3.8
+  env
 fi
 
 # sccache will fail for CUDA builds if all cores are used for compiling
